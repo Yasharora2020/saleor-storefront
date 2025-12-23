@@ -21,6 +21,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate GraphQL types from Saleor demo
+        run: pnpm graphql-codegen --config .graphqlrc.ts
+        env:
+          NEXT_PUBLIC_SALEOR_API_URL: https://demo.saleor.io/graphql/
+
+      - name: Pre-build Next.js (with generated types)
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_SALEOR_API_URL: https://saleor-api.geekery.work/graphql/
+          NEXT_PUBLIC_STOREFRONT_URL: https://shop.geekery.work
+          NEXT_PUBLIC_DEFAULT_CHANNEL: default-channel
+          NEXT_OUTPUT: standalone
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -44,12 +70,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: Dockerfile.ci
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            NEXT_PUBLIC_SALEOR_API_URL=https://saleor-api.geekery.work/graphql/
-            NEXT_PUBLIC_STOREFRONT_URL=https://shop.geekery.work
-            NEXT_PUBLIC_DEFAULT_CHANNEL=default-channel
           cache-from: type=gha
           cache-to: type=gha,mode=max
