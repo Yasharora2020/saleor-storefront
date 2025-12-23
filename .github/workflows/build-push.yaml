@@ -35,7 +35,7 @@ jobs:
       - name: Generate GraphQL types from schema file
         run: pnpm graphql-codegen --config .graphqlrc.ts
         env:
-          GITHUB_ACTION: generate-schema-from-file
+          NEXT_PUBLIC_SALEOR_API_URL: schema.graphql
 
       - name: Pre-build Next.js (with generated types)
         run: pnpm build
