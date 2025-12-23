@@ -32,10 +32,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Generate GraphQL types from Saleor demo
+      - name: Generate GraphQL types from schema file
         run: pnpm graphql-codegen --config .graphqlrc.ts
         env:
-          NEXT_PUBLIC_SALEOR_API_URL: https://demo.saleor.io/graphql/
+          GITHUB_ACTION: generate-schema-from-file
 
       - name: Pre-build Next.js (with generated types)
         run: pnpm build
