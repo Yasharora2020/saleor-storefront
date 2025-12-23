@@ -37,8 +37,8 @@ jobs:
         env:
           NEXT_PUBLIC_SALEOR_API_URL: schema.graphql
 
-      - name: Build Next.js (skip prebuild since codegen already ran)
-        run: pnpm build --ignore-scripts
+      - name: Build Next.js (directly to skip lifecycle scripts)
+        run: pnpm exec next build
         env:
           NEXT_PUBLIC_SALEOR_API_URL: https://saleor-api.geekery.work/graphql/
           NEXT_PUBLIC_STOREFRONT_URL: https://shop.geekery.work
